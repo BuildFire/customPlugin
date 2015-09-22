@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html ng-app="customPlugin" ng-controller="customPluginCtrl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load helper.css to use our helper classes.
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    -->
+    <style type="text/css" ng-bind="data.content.css"></style>
+
+    <!-- JS -->
+    <script src="../../../scripts/buildfire.js"></script>
+    <script src="../../../scripts/angular/angular.min.js"></script>
+    <script src="../../../scripts/angular/ui-bootstrap.min.js"></script>
+    <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+</head>
+<body ng-cloak>
+<div id="dvCustomWidget"></div>
+<script>
+    var textPluginApp = angular.module('customPlugin', []);
+
+    textPluginApp.controller('customPluginCtrl', ['$scope', function ($scope) {
+        var oldData = {
+            content: {
+                html: "",
+                css: "",
+                js: ""
+            },
+            design: {
+                backgroundImage: null,
+                backgroundBlur: 0
+            }
+        };
+
+        $scope.data = oldData;
+
+        /*
+         * bind data to the scope
+         * */
+        function bind(data) {
+            $scope.data = data;
+            if (data && data.content) {
+                if (oldData.content.html != data.content.html || oldData.content.css != data.content.css || oldData.content.js != data.content.js) {
+                    var iFrameContent = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+                            '<style>' + data.content.css + '</style></head><body>' + data.content.html + '<script>' + data.content.js + '<' + '/script></body>';
+                    var customFrame = $('<iframe class="iFrame-custom"></iframe>');
+                    $('#dvCustomWidget:first iframe').remove();
+                    $('#dvCustomWidget').append(customFrame);
+
+                    var doc = customFrame[0].contentWindow.document;
+                    doc.open();
+                    doc.write(iFrameContent);
+                    doc.close();
+                    oldData = data;
+                }
+            }
+        }
+
+        /*
+         * Go pull saved data
+         * */
+        function loadData() {
+            buildfire.datastore.get(function (err, result) {
+                if (result && result.data && !angular.equals({}, result.data)) bind(result.data);
+            });
+        }
+
+        loadData();
+
+        /**
+         * when a refresh is triggered get reload data
+         */
+        buildfire.datastore.onRefresh(loadData);
+
+        buildfire.datastore.onUpdate(function (e) {
+            loadData();
+        });
+    }]);
+</script>
+<script ng-bind="data.content.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html ng-app="customPluginApp">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load helper.css to use our helper classes.
+    <link href="../../../../styles/helper.css" rel="stylesheet">
+    -->
+    <style>
+        .ace_editor {
+            border: 1px solid #dddddd;
+        }
+
+        .ace_editor {
+            height: 500px;
+        }
+    </style>
+
+    <!-- JS -->
+    <script type="text/javascript" src="../../../../scripts/buildfire.js"></script>
+    <script type="text/javascript" src="../../../../scripts/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
+</head>
+<body ng-controller="customPluginCtrl" id="customPluginApp">
+<div ng-form="frmMain">
+    <tabset type="tabs" class="tabs-left">
+        <tab heading="Html">
+            <div id="htmlEditor"
+                 ui-ace="{ require: ['ace/mode/html'], advanced: { enableSnippets: true, enableBasicAutocompletion: true, enableLiveAutocompletion: true}, useWrapMode : true, mode: 'html'}"
+                 ng-model="data.content.html"><pre>
+&lt;!--
+enter the html that you would like in the &lt;body&gt;
+--&gt;
+Hello World
+&lt;div id=&#39;jsText&#39;&gt;&lt;/div&gt;</pre>
+            </div>
+        </tab>
+        <tab heading="Css">
+            <div id="cssEditor"
+                 ui-ace="{ require: ['ace/mode/css'], advanced: { enableSnippets: true, enableBasicAutocompletion: true, enableLiveAutocompletion: true}, useWrapMode : true, mode: 'css'}"
+                 ng-model="data.content.css"></div>
+        </tab>
+        <tab heading="JavaScript">
+            <div id="jsEditor"
+                 ui-ace="{ require: ['ace/mode/javascript'], advanced: { enableSnippets: true, enableBasicAutocompletion: true, enableLiveAutocompletion: true}, useWrapMode : true, mode: 'javascript'}"
+                 ng-model="data.content.js"><pre>
+//use require.js structure to define your code http://requirejs.org/
+//modules that can be imported, ['jquery','bluetooth']
+define (['jquery'],function ($){
+    var obj = {
+    //this is a required method keep it even if empty
+    init: function(){
+        //use this function to initialize your screen
+        //this method is called immediately after page is loaded
+        $('#jsText:first').text('hello form javascript!!!');
+    }};
+    return obj; // must return an object with init method
+});</pre>
+            </div>
+        </tab>
+    </tabset>
+</div>
+<script type="text/javascript" src="../../resources/script/ace-builds/src-min-noconflict/ace.js"></script>
+<script type="text/javascript"
+        src="../../resources/script/ace-builds/src-min-noconflict/ext-language_tools.js"></script>
+<script type="text/javascript" src="../../resources/script/angular-ui-ace/ui-ace.min.js"></script>
+<script>
+    var customPluginApp = angular.module('customPluginApp', ['ui.bootstrap', 'ui.ace']);
+    var customPluginCtrl = customPluginApp.controller('customPluginCtrl', ['$scope', function ($scope) {
+        /*
+         * Go pull any previously saved data
+         * */
+        buildfire.datastore.get(function (err, result) {
+            var htmlEditor = ace.edit("htmlEditor");
+            var cssEditor = ace.edit("cssEditor");
+            var jsEditor = ace.edit("jsEditor");
+
+            if (result && result.data && !angular.equals({}, result.data)) {
+                $scope.data = result.data;
+                $scope.id = result.id;
+                if ($scope.data.content) {
+                    if ($scope.data.content.html) htmlEditor.setValue($scope.data.content.html);
+                    if ($scope.data.content.css) cssEditor.setValue($scope.data.content.css);
+                    if ($scope.data.content.js) jsEditor.setValue($scope.data.content.js);
+                }
+                if (tmrDelay) clearTimeout(tmrDelay);
+            } else {
+                $scope.data = {
+                    content: {
+                        html: htmlEditor.getValue(),
+                        css: cssEditor.getValue(),
+                        js: jsEditor.getValue()
+                    },
+                    design: {
+                        backgroundImage: null,
+                        backgroundBlur: 0
+                    }
+                };
+            }
+
+            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                $scope.$apply();
+            }
+            /*
+             * watch for changes in data and trigger the saveDataWithDelay function on change
+             * */
+            $scope.$watch('data', saveDataWithDelay, true);
+        });
+
+        /*
+         * Call the datastore to save the data object
+         */
+        var saveData = function (newObj) {
+            if (newObj == undefined) return;
+            if ($scope.frmMain.$invalid) {
+                console.warn('invalid data, details will not be saved');
+                return;
+            }
+
+            buildfire.datastore.save(newObj, function (err, result) {
+                if (err || !result) {
+                    console.error('Error saving the widget details: ', err);
+                }
+                else {
+                    console.info('Widget details saved');
+                }
+            });
+        };
+
+        /*
+         * create an artificial delay so api is not called on every character entered
+         * */
+        var tmrDelay = null;
+        var saveDataWithDelay = function (newObj, oldObj) {
+            if (tmrDelay) clearTimeout(tmrDelay);
+            tmrDelay = setTimeout(function () {
+                saveData(newObj);
+            }, 500);
+        };
+    }]);
+</script>
+</body>
+</html>
