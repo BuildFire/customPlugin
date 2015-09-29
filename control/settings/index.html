@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html  ng-app="customPluginSetting">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     	
@@ -8,16 +8,91 @@
 	-->
 	
 	<!-- JS -->
-	<script src="../../../../scripts/buildfire.js"></script>
-   
- 	<!--
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
-
-    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-    -->
+    <script type="text/javascript" src="../../../../scripts/buildfire.js"></script>
+    <script type="text/javascript" src="../../../../scripts/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
 </head>
-<body>
-    <span>Settings - Hello world!</span>
+<body ng-controller="customPluginSettingCtrl">
+
+<div ng-form="frmMain">
+    <div class="btn-group" dropdown keyboard-nav>
+        <label for="jsLibraries">Javascript Library:</label>
+        <select name="jsLibraries" id="jsLibraries" ng-model="data.setting.jsLibraries">
+            <option value="">No Libraries</option>
+            <option value="RequireJS2.1.11">RequireJS 2.1.11</option>
+        </select>
+    </div>
+</div>
+<script>
+    var customPluginSetting = angular.module('customPluginSetting', []);
+    var customPluginSettingCtrl = customPluginSetting.controller('customPluginSettingCtrl', ['$scope', function ($scope) {
+        /*
+         * Go pull any previously saved data
+         * */
+        buildfire.datastore.get(function (err, result) {
+            if (result && result.data && !angular.equals({}, result.data)) {
+                $scope.data = result.data;
+                $scope.id = result.id;
+                if (tmrDelay) clearTimeout(tmrDelay);
+            } else {
+                $scope.data = {
+                    content: {
+                        html: '',
+                        css: '',
+                        js: ''
+                    },
+                    design: {
+                        backgroundImage: null,
+                        backgroundBlur: 0
+                    },
+                    setting: {
+                        jsLibraries: ""
+                    }
+                };
+            }
+
+            if (!$scope.$$phase && !$scope.$root.$$phase) {
+                $scope.$apply();
+            }
+            /*
+             * watch for changes in data and trigger the saveDataWithDelay function on change
+             * */
+            $scope.$watch('data', saveDataWithDelay, true);
+        });
+
+        /*
+         * Call the datastore to save the data object
+         */
+        var saveData = function (newObj) {
+            debugger;
+            if (newObj == undefined) return;
+            if ($scope.frmMain.$invalid) {
+                console.warn('invalid data, details will not be saved');
+                return;
+            }
+
+            buildfire.datastore.save(newObj, function (err, result) {
+                if (err || !result) {
+                    console.error('Error saving the widget details: ', err);
+                }
+                else {
+                    console.info('Widget details saved');
+                }
+            });
+        };
+
+        /*
+         * create an artificial delay so api is not called on every character entered
+         * */
+        var tmrDelay = null;
+        var saveDataWithDelay = function (newObj, oldObj) {
+            if (tmrDelay) clearTimeout(tmrDelay);
+            tmrDelay = setTimeout(function () {
+                saveData(newObj);
+            }, 500);
+        };
+    }]);
+</script>
 </body>
 </html>
