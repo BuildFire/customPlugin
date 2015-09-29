@@ -45,7 +45,6 @@
             if (data && data.content) {
                 if (oldData.content.html != data.content.html || oldData.content.css != data.content.css || oldData.content.js != data.content.js) {
                     var javaScriptTag = "";
-                    debugger;
                     if (data.setting && data.setting.jsLibraries && data.setting.jsLibraries == "RequireJS2.1.11")
                         javaScriptTag = '<script src="js/require.2.1.11.js"><' + '/script>';
                     var iFrameContent = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
