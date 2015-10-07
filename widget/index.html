@@ -29,6 +29,9 @@
             design: {
                 backgroundImage: null,
                 backgroundBlur: 0
+            },
+            setting: {
+                jsLibraries: ""
             }
         };
 
@@ -41,8 +44,12 @@
             $scope.data = data;
             if (data && data.content) {
                 if (oldData.content.html != data.content.html || oldData.content.css != data.content.css || oldData.content.js != data.content.js) {
+                    var javaScriptTag = "";
+                    if (data.setting && data.setting.jsLibraries && data.setting.jsLibraries == "RequireJS2.1.11")
+                        javaScriptTag = '<script src="js/require.2.1.11.js"><' + '/script>';
                     var iFrameContent = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-                            '<style>' + data.content.css + '</style></head><body>' + data.content.html + '<script>' + data.content.js + '<' + '/script></body>';
+                            '<style>' + data.content.css + '</style>' + javaScriptTag + '</head><body>' + data.content.html + '<script>' + data.content.js + '<' + '/script></body></html>';
+                    console.log(iFrameContent);
                     var customFrame = $('<iframe class="iFrame-custom"></iframe>');
                     $('#dvCustomWidget:first iframe').remove();
                     $('#dvCustomWidget').append(customFrame);
@@ -78,6 +85,5 @@
     }]);
 </script>
 <script ng-bind="data.content.js"></script>
-
 </body>
 </html>

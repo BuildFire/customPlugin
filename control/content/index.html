@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../../../../scripts/angular/ui-bootstrap.min.js"></script>
     <script type="text/javascript" src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
 </head>
-<body ng-controller="customPluginCtrl" id="customPluginApp">
+<body ng-controller="customPluginCtrl">
 <div ng-form="frmMain">
     <tabset type="tabs" class="tabs-left">
         <tab heading="Html">
@@ -61,10 +61,10 @@ define (['jquery'],function ($){
         </tab>
     </tabset>
 </div>
-<script type="text/javascript" src="../../resources/script/ace-builds/src-min-noconflict/ace.js"></script>
+<script type="text/javascript" src="assets/js/ace-builds/src-min-noconflict/ace.js"></script>
 <script type="text/javascript"
-        src="../../resources/script/ace-builds/src-min-noconflict/ext-language_tools.js"></script>
-<script type="text/javascript" src="../../resources/script/angular-ui-ace/ui-ace.min.js"></script>
+        src="assets/js/ace-builds/src-min-noconflict/ext-language_tools.js"></script>
+<script type="text/javascript" src="assets/js/angular-ui-ace/ui-ace.min.js"></script>
 <script>
     var customPluginApp = angular.module('customPluginApp', ['ui.bootstrap', 'ui.ace']);
     var customPluginCtrl = customPluginApp.controller('customPluginCtrl', ['$scope', function ($scope) {
@@ -95,6 +95,9 @@ define (['jquery'],function ($){
                     design: {
                         backgroundImage: null,
                         backgroundBlur: 0
+                    },
+                    setting:{
+                        jsLibraries: ""
                     }
                 };
             }
