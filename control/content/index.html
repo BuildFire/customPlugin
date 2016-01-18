@@ -25,7 +25,7 @@
 <body ng-controller="customPluginCtrl">
 <div ng-form="frmMain">
     <tabset type="tabs" class="tabs-left">
-        <tab heading="Html">
+        <tab heading="HTML">
             <div id="htmlEditor"
                  ui-ace="{ require: ['ace/mode/html'], advanced: { enableSnippets: true, enableBasicAutocompletion: true, enableLiveAutocompletion: true}, useWrapMode : true, mode: 'html'}"
                  ng-model="data.content.html"><pre>
@@ -36,7 +36,7 @@ Hello World
 &lt;div id=&#39;jsText&#39;&gt;&lt;/div&gt;</pre>
             </div>
         </tab>
-        <tab heading="Css">
+        <tab heading="CSS">
             <div id="cssEditor"
                  ui-ace="{ require: ['ace/mode/css'], advanced: { enableSnippets: true, enableBasicAutocompletion: true, enableLiveAutocompletion: true}, useWrapMode : true, mode: 'css'}"
                  ng-model="data.content.css"></div>
