@@ -7,11 +7,6 @@
     <link href="../../../../styles/helper.css" rel="stylesheet">
     -->
     <style type="text/css" ng-bind="data.content.css"></style>
-	<style>
-        #dvCustomWidget, .iFrame-custom {
-            height: 100%;
-        }
-    </style>
 
     <!-- JS -->
     <script src="../../../scripts/buildfire.js"></script>
@@ -20,7 +15,7 @@
     <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
 </head>
 <body ng-cloak>
-<div id="dvCustomWidget"></div>
+<div id="dvCustomWidget" style="height:100%;"></div>
 <script>
     var textPluginApp = angular.module('customPlugin', []);
 
@@ -55,7 +50,7 @@
                     var iFrameContent = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
                             '<style>' + data.content.css + '</style>' + javaScriptTag + '</head><body>' + data.content.html + '<script>' + data.content.js + '<' + '/script></body></html>';
                     console.log(iFrameContent);
-                    var customFrame = $('<iframe class="iFrame-custom"></iframe>');
+                    var customFrame = $('<iframe class="iFrame-custom" style="height:100%; width:1px; min-width:100%;"></iframe>');
                     $('#dvCustomWidget:first iframe').remove();
                     $('#dvCustomWidget').append(customFrame);
 
